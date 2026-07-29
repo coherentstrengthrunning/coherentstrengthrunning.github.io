@@ -1,47 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoherentStrengthRunning</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-<header>
-    <nav class="navbar">
-        <h2 class="logo">CoherentStrengthRunning</h2>
+body {
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    color: #1e293b;
+}
 
-        <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Philosophy</a></li>
-            <li><a href="#">Training</a></li>
-            <li><a href="#">Resources</a></li>
-            <li><a href="#">About</a></li>
-        </ul>
-    </nav>
-</header>
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 8%;
+}
 
-<section class="hero">
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+}
 
-    <div class="hero-content">
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
 
-        <h1>Train with Purpose.<br>Perform for Life.</h1>
+.nav-links a {
+    text-decoration: none;
+    color: #1e293b;
+    font-weight: 600;
+}
 
-        <p>
-            Evidence-based hybrid training that combines
-            strength, running, mobility and recovery into
-            one complete system.
-        </p>
+.hero {
+    height: 85vh;
+    display: flex;
+    align-items: center;
+    padding: 0 8%;
+}
 
-        <div class="buttons">
-            <a href="#" class="btn-primary">Start Your Journey</a>
-            <a href="#" class="btn-secondary">Explore Training</a>
-        </div>
+.hero-content {
+    max-width: 700px;
+}
 
-    </div>
+.hero h1 {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
 
-</section>
+.hero p {
+    font-size: 22px;
+    line-height: 1.6;
+    color: #475569;
+    margin-bottom: 35px;
+}
 
-</body>
-</html>
+.buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background: #10b981;
+    color: white;
+}
+
+.btn-secondary {
+    border: 2px solid #10b981;
+    color: #10b981;
+}
