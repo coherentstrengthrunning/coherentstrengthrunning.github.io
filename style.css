@@ -1,5 +1,7 @@
 :root {
   /* Background */
+  --font-heading: "Manrope", sans-serif;
+--font-body: "Inter", sans-serif;
   --background: #0E1116;
   --background-secondary: #161B22;
   --surface: #1F2630;
@@ -35,7 +37,7 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Inter", sans-serif;
     background: var(--background);
     color: var(--text-primary);
 }
