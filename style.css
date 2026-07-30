@@ -1,3 +1,33 @@
+:root {
+  /* Background */
+  --background: #0E1116;
+  --background-secondary: #161B22;
+  --surface: #1F2630;
+
+  /* Text */
+  --text-primary: #F5F7FA;
+  --text-secondary: #B8C2CC;
+  --text-muted: #7D8794;
+
+  /* Brand */
+  --primary: #1F8A8A;
+  --primary-dark: #165E63;
+  --secondary: #7FAE7B;
+  --highlight: #F4B942;
+
+  /* Status */
+  --success: #3FAE5A;
+  --warning: #F4B942;
+  --error: #C65B5B;
+
+  /* Borders */
+  --border: #2B3440;
+  --divider: #232B36;
+
+  /* Radius */
+  --radius: 16px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,8 +36,8 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: #ffffff;
-    color: #1e293b;
+    background: var(--background);
+    color: var(--text-primary);
 }
 
 .navbar {
@@ -20,6 +50,7 @@ body {
 .logo {
     font-size: 28px;
     font-weight: bold;
+    color: var(--text-primary);
 }
 
 .nav-links {
@@ -30,8 +61,13 @@ body {
 
 .nav-links a {
     text-decoration: none;
-    color: #1e293b;
+    color: var(--text-primary);
     font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
 }
 
 .hero {
@@ -46,7 +82,7 @@ body {
 }
 
 .eyebrow {
-    color: #2f855a;
+    color: var(--secondary);
     text-transform: uppercase;
     letter-spacing: 3px;
     font-size: 14px;
@@ -56,13 +92,14 @@ body {
 
 .hero h1 {
     font-size: 60px;
+    line-height: 1.1;
     margin-bottom: 20px;
 }
 
 .hero p {
     font-size: 22px;
-    line-height: 1.6;
-    color: #475569;
+    line-height: 1.7;
+    color: var(--text-secondary);
     margin-bottom: 35px;
 }
 
@@ -74,17 +111,27 @@ body {
 .btn-primary,
 .btn-secondary {
     padding: 15px 30px;
-    border-radius: 8px;
+    border-radius: var(--radius);
     text-decoration: none;
     font-weight: bold;
+    transition: 0.3s ease;
 }
 
 .btn-primary {
-    background: #10b981;
-    color: white;
+    background: var(--primary);
+    color: var(--text-primary);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
 }
 
 .btn-secondary {
-    border: 2px solid #10b981;
-    color: #10b981;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-secondary:hover {
+    background: var(--primary);
+    color: var(--text-primary);
 }
