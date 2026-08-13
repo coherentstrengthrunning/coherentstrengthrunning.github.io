@@ -283,6 +283,146 @@
     text-align:right;
   }
   @media (max-width:560px){ .footer-meta{ text-align:left; } }
+
+  /* ---------- GENERIC REVEAL ---------- */
+  .reveal{
+    opacity:0; transform:translateY(18px);
+    transition:opacity .8s cubic-bezier(.16,.84,.44,1), transform .8s cubic-bezier(.16,.84,.44,1);
+  }
+  .reveal.in{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+  .section-head{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+    margin-bottom:20px; flex-wrap:wrap;
+  }
+  .section-head h2{
+    font-family:var(--grotesk); font-weight:600; font-size:clamp(26px,3.4vw,38px);
+    letter-spacing:-.01em; max-width:560px;
+  }
+  .section-head p{
+    font-family:var(--serif); font-style:italic; color:var(--dim); font-size:16px; max-width:300px;
+  }
+  .sample-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--dimmer); border:1px solid var(--line); padding:7px 12px; margin-bottom:48px;
+  }
+  .sample-badge::before{
+    content:""; width:6px; height:6px; border-radius:50%; background:var(--grad); flex:none;
+  }
+
+  /* ---------- RESEARCH TIMELINE ---------- */
+  .evidence{ border-top:1px solid var(--line); }
+  .timeline{
+    display:flex; align-items:stretch; margin-top:60px;
+  }
+  .tl-node{
+    flex:1; min-width:0; padding:0 22px 0 0; position:relative;
+  }
+  .tl-year{
+    font-family:var(--mono); font-weight:500; font-size:13px; letter-spacing:.1em;
+    background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+    margin-bottom:14px; display:inline-block;
+  }
+  .tl-node h3{
+    font-family:var(--grotesk); font-weight:600; font-size:16.5px; text-transform:uppercase;
+    letter-spacing:.02em; margin-bottom:10px;
+  }
+  .tl-node p{
+    font-size:13.5px; line-height:1.6; color:var(--dim); max-width:230px;
+  }
+  .tl-node.dest{
+    background:var(--panel); border:1px solid var(--line); padding:22px 20px; margin-right:0;
+  }
+  .tl-node.dest .tl-year{ background:none; -webkit-text-fill-color:initial; color:var(--lime); }
+  .tl-node.dest p{ color:var(--white); font-family:var(--serif); font-style:italic; font-size:14.5px; }
+  .tl-arrow{
+    flex:none; width:44px; display:flex; align-items:center; justify-content:center;
+    color:var(--dimmer);
+  }
+  .tl-arrow svg{ width:20px; height:20px; }
+
+  @media (max-width:820px){
+    .timeline{ flex-direction:column; gap:0; }
+    .tl-node{ padding:0 0 28px 0; }
+    .tl-node p{ max-width:420px; }
+    .tl-arrow{ width:auto; height:36px; transform:rotate(90deg); margin-left:-2px; }
+  }
+
+  /* ---------- DATA DASHBOARD ---------- */
+  .dashboard{ border-top:1px solid var(--line); }
+  .chart-grid{
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line);
+  }
+  @media (max-width:860px){ .chart-grid{ grid-template-columns:1fr; } }
+
+  .chart-card{ background:var(--black); padding:30px 28px 22px; }
+  .chart-card .n{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.2em; color:var(--dimmer);
+    display:block; margin-bottom:8px;
+  }
+  .chart-card h3{
+    font-family:var(--grotesk); font-weight:600; font-size:15.5px; letter-spacing:.02em;
+    text-transform:uppercase; margin-bottom:4px;
+  }
+  .chart-card .desc{ font-size:12.5px; color:var(--dim); margin-bottom:18px; max-width:340px; }
+  .chart-box{ position:relative; height:190px; }
+
+  /* ---------- BODY LAB ---------- */
+  .bodylab{ border-top:1px solid var(--line); }
+  .bl-tabs{ display:flex; gap:10px; margin-top:44px; margin-bottom:1px; flex-wrap:wrap; }
+  .bl-tab{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    padding:11px 20px; border:1px solid var(--line); background:transparent; color:var(--dim);
+    cursor:pointer; transition:all .25s ease;
+  }
+  .bl-tab:hover{ color:var(--white); border-color:var(--dimmer); }
+  .bl-tab.active{ color:#08110a; background:var(--lime); border-color:var(--lime); }
+
+  .bl-grid{
+    display:grid; grid-template-columns:1fr 360px; gap:1px;
+    background:var(--line); border:1px solid var(--line); margin-top:24px;
+  }
+  @media (max-width:900px){ .bl-grid{ grid-template-columns:1fr; } }
+
+  .bl-canvas-wrap{
+    background:radial-gradient(ellipse at 50% 30%, #101010, var(--black));
+    height:540px; position:relative;
+  }
+  #body-canvas{ width:100%; height:100%; display:block; cursor:grab; touch-action:pan-y; }
+  #body-canvas:active{ cursor:grabbing; }
+  .bl-hint{
+    position:absolute; bottom:16px; left:0; right:0; text-align:center;
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--dimmer); pointer-events:none;
+  }
+  .bl-legend{
+    position:absolute; top:18px; left:18px; display:flex; flex-direction:column; gap:8px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim);
+  }
+  .bl-legend span{ display:flex; align-items:center; gap:8px; }
+  .bl-legend i{ width:8px; height:8px; border-radius:50%; display:block; }
+  .bl-fallback{
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+    text-align:center; padding:40px; font-family:var(--mono); font-size:12px; color:var(--dimmer);
+    letter-spacing:.05em; line-height:1.6;
+  }
+
+  .bl-panel{ background:var(--black); padding:32px 28px; display:flex; flex-direction:column; gap:24px; }
+  .bl-row .label{
+    font-family:var(--mono); font-size:10px; letter-spacing:.16em; color:var(--dimmer);
+    text-transform:uppercase; margin-bottom:7px;
+  }
+  .bl-row .value{ font-family:var(--grotesk); font-size:14.5px; color:var(--white); line-height:1.55; }
+  .bl-row.evidence .value{
+    font-family:var(--serif); font-style:italic; color:var(--dim); font-size:14px; line-height:1.6;
+  }
+  .bl-move-title{
+    font-family:var(--grotesk); font-weight:600; font-size:20px; text-transform:uppercase;
+    letter-spacing:.02em; padding-bottom:18px; border-bottom:1px solid var(--line);
+  }
 </style>
 </head>
 <body>
@@ -294,7 +434,9 @@
   </a>
   <div class="nav-links">
     <a href="#manifesto">Manifesto</a>
-    <a href="#signals">Method</a>
+    <a href="#evidence">Evidence</a>
+    <a href="#dashboard">Data</a>
+    <a href="#bodylab">Movements</a>
   </div>
 </nav>
 
@@ -354,6 +496,141 @@
 
         <p class="stanza finale">In the end, there is no athlete.<br><span class="accent">Only the work.</span></p>
 
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="evidence" id="evidence">
+  <div class="wrap">
+    <div class="eyebrow">Evidence Lineage</div>
+    <div class="section-head">
+      <h2>How the understanding evolved.</h2>
+      <p>Concurrent training has a real research history. CSR sits at the end of it, not outside it.</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-node reveal">
+        <div class="tl-year">1980</div>
+        <h3>Interference Effect</h3>
+        <p>Hickson's original study finds strength gains stall after several weeks of combined training, while aerobic capacity is unaffected.</p>
+      </div>
+      <div class="tl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16m0 0l-6-6m6 6l-6 6"/></svg></div>
+
+      <div class="tl-node reveal">
+        <div class="tl-year">2012</div>
+        <h3>Meta-Analysis</h3>
+        <p>Wilson et al. pool 21 studies. Interference is real, strongest for power output, and depends on modality, frequency, and duration.</p>
+      </div>
+      <div class="tl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16m0 0l-6-6m6 6l-6 6"/></svg></div>
+
+      <div class="tl-node reveal">
+        <div class="tl-year">2025</div>
+        <h3>Updated Review</h3>
+        <p>The question shifts from whether to combine training to how — sequencing and recovery spacing explain most of the outcome.</p>
+      </div>
+      <div class="tl-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16m0 0l-6-6m6 6l-6 6"/></svg></div>
+
+      <div class="tl-node dest reveal">
+        <div class="tl-year">CSR Methodology</div>
+        <h3>Trained deliberately</h3>
+        <p>Most interference findings come from highly trained specialists. For hybrid, general-population goals, the evidence supports exactly what CSR trains — strength and endurance, combined.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="dashboard" id="dashboard">
+  <div class="wrap">
+    <div class="eyebrow">The Data</div>
+    <div class="section-head">
+      <h2>What a coherent log actually tracks.</h2>
+      <p>Six views into one training block.</p>
+    </div>
+    <div class="sample-badge">Sample athlete — illustrative data</div>
+
+    <div class="chart-grid">
+
+      <div class="chart-card reveal">
+        <span class="n">01</span>
+        <h3>VO₂ Max Trend</h3>
+        <div class="desc">Estimated aerobic capacity across a 12-week block.</div>
+        <div class="chart-box"><canvas id="chart-vo2"></canvas></div>
+      </div>
+
+      <div class="chart-card reveal">
+        <span class="n">02</span>
+        <h3>Weekly Training Load</h3>
+        <div class="desc">Relative load per week, with scheduled deload weeks.</div>
+        <div class="chart-box"><canvas id="chart-load"></canvas></div>
+      </div>
+
+      <div class="chart-card reveal">
+        <span class="n">03</span>
+        <h3>HRV Recovery</h3>
+        <div class="desc">Morning heart-rate variability across 30 days.</div>
+        <div class="chart-box"><canvas id="chart-hrv"></canvas></div>
+      </div>
+
+      <div class="chart-card reveal">
+        <span class="n">04</span>
+        <h3>Zone Distribution</h3>
+        <div class="desc">Time spent per intensity zone — a polarized shape.</div>
+        <div class="chart-box"><canvas id="chart-zones"></canvas></div>
+      </div>
+
+      <div class="chart-card reveal">
+        <span class="n">05</span>
+        <h3>Cadence Histogram</h3>
+        <div class="desc">Step-rate distribution across all runs (spm).</div>
+        <div class="chart-box"><canvas id="chart-cadence"></canvas></div>
+      </div>
+
+      <div class="chart-card reveal">
+        <span class="n">06</span>
+        <h3>Pace Curve</h3>
+        <div class="desc">Best-effort pace across race distances.</div>
+        <div class="chart-box"><canvas id="chart-pace"></canvas></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="bodylab" id="bodylab">
+  <div class="wrap">
+    <div class="eyebrow">The Movements</div>
+    <div class="section-head">
+      <h2>Four movements. Different demands.</h2>
+      <p>Select one to see what it costs, and what it builds.</p>
+    </div>
+
+    <div class="bl-tabs" role="tablist">
+      <button class="bl-tab active" data-move="running">Running</button>
+      <button class="bl-tab" data-move="squat">Squat</button>
+      <button class="bl-tab" data-move="pushup">Push-up</button>
+      <button class="bl-tab" data-move="mobility">Mobility</button>
+    </div>
+
+    <div class="bl-grid">
+      <div class="bl-canvas-wrap">
+        <div class="bl-legend">
+          <span><i style="background:var(--lime)"></i>Primary</span>
+          <span><i style="background:var(--cyan)"></i>Secondary</span>
+        </div>
+        <canvas id="body-canvas"></canvas>
+        <div class="bl-fallback" id="body-fallback">3D preview unavailable in this environment.<br>The panel to the right still reflects your selection.</div>
+        <div class="bl-hint">Drag to rotate</div>
+      </div>
+      <div class="bl-panel">
+        <div class="bl-move-title" id="bl-title">Running</div>
+        <div class="bl-row"><div class="label">Primary Muscles</div><div class="value" id="bl-primary">—</div></div>
+        <div class="bl-row"><div class="label">Secondary Muscles</div><div class="value" id="bl-secondary">—</div></div>
+        <div class="bl-row"><div class="label">Joint Loading</div><div class="value" id="bl-joint">—</div></div>
+        <div class="bl-row"><div class="label">Recovery Time</div><div class="value" id="bl-recovery">—</div></div>
+        <div class="bl-row evidence"><div class="label">Supporting Evidence</div><div class="value" id="bl-evidence">—</div></div>
       </div>
     </div>
   </div>
@@ -423,6 +700,10 @@
     <div class="footer-meta">Founded by DP — Mysuru, India</div>
   </div>
 </footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
 (function(){
@@ -511,6 +792,436 @@
     requestAnimationFrame(draw);
   }
   requestAnimationFrame(draw);
+})();
+</script>
+
+<script>
+// ---------- GENERIC SCROLL REVEAL (timeline nodes, chart cards) ----------
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+  if(reduced || !('IntersectionObserver' in window)){
+    els.forEach(function(e){ e.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
+  els.forEach(function(e){ io.observe(e); });
+})();
+</script>
+
+<script>
+// ---------- DATA DASHBOARD (Chart.js) ----------
+(function(){
+  if(typeof Chart === 'undefined') return;
+
+  var COLOR_TEXT = '#8C8A82';
+  var COLOR_GRID = 'rgba(244,242,236,0.06)';
+  var COLOR_WHITE = '#F4F2EC';
+  var COLOR_LIME = '#A6FF2E';
+  var COLOR_CYAN = '#21E8D8';
+
+  Chart.defaults.font.family = "'JetBrains Mono', monospace";
+  Chart.defaults.font.size = 10.5;
+  Chart.defaults.color = COLOR_TEXT;
+
+  function fmtPace(v){
+    var m = Math.floor(v);
+    var s = Math.round((v-m)*60);
+    if(s===60){ m+=1; s=0; }
+    return m+':'+(s<10?'0':'')+s;
+  }
+
+  function baseScales(yExtra, xExtra){
+    var s = {
+      x:{ grid:{ color:COLOR_GRID, drawTicks:false }, border:{ color:'rgba(244,242,236,0.12)' }, ticks:{ color:COLOR_TEXT } },
+      y:{ grid:{ color:COLOR_GRID, drawTicks:false }, border:{ display:false }, ticks:{ color:COLOR_TEXT } }
+    };
+    if(yExtra) Object.assign(s.y, yExtra);
+    if(xExtra) Object.assign(s.x, xExtra);
+    return s;
+  }
+
+  var builders = {
+
+    'chart-vo2': function(ctx){
+      var weeks = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'];
+      var vals = [44.2,44.6,45.1,45.7,46.2,46.9,47.3,48.0,48.7,49.5,50.3,51.1];
+      return new Chart(ctx, {
+        type:'line',
+        data:{ labels:weeks, datasets:[{
+          data:vals, borderColor:COLOR_LIME, backgroundColor:'rgba(166,255,46,0.08)',
+          borderWidth:2, pointRadius:0, tension:0.35, fill:true
+        }]},
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          animation:{ duration:1400, easing:'easeOutCubic' },
+          plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(c){ return c.parsed.y.toFixed(1)+' ml/kg/min'; } } } },
+          scales: baseScales({ suggestedMin:42 })
+        }
+      });
+    },
+
+    'chart-load': function(ctx){
+      var weeks = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'];
+      var vals  = [420,460,500,300,480,520,560,340,540,580,620,360];
+      var colors = vals.map(function(v,i){ return (i+1)%4===0 ? COLOR_CYAN : COLOR_LIME; });
+      return new Chart(ctx, {
+        type:'bar',
+        data:{ labels:weeks, datasets:[{ data:vals, backgroundColor:colors, borderRadius:2, maxBarThickness:22 }]},
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          animation:{ duration:1200, easing:'easeOutCubic' },
+          plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(c){ return c.parsed.y+' load units'; } } } },
+          scales: baseScales()
+        }
+      });
+    },
+
+    'chart-hrv': function(ctx){
+      var labels = [], vals = [];
+      for(var i=0;i<30;i++){
+        labels.push('D'+(i+1));
+        var v = 61 + 7*Math.sin(i/4.2) + 3*Math.sin(i*1.3);
+        if(i%9===4 || i%9===5) v -= 9;
+        vals.push(Math.round(v*10)/10);
+      }
+      return new Chart(ctx, {
+        type:'line',
+        data:{ labels:labels, datasets:[{
+          data:vals, borderColor:COLOR_CYAN, backgroundColor:'rgba(33,232,216,0.08)',
+          borderWidth:1.6, pointRadius:0, tension:0.3, fill:true
+        }]},
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          animation:{ duration:1400, easing:'easeOutCubic' },
+          plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(c){ return c.parsed.y+' ms'; } } } },
+          scales: baseScales({ suggestedMin:40 }, { ticks:{ color:COLOR_TEXT, maxTicksLimit:6 } })
+        }
+      });
+    },
+
+    'chart-zones': function(ctx){
+      var labels = ['Z1','Z2','Z3','Z4','Z5'];
+      var vals = [38,34,12,11,5];
+      var colors = [COLOR_TEXT, COLOR_LIME, COLOR_TEXT, COLOR_CYAN, COLOR_CYAN];
+      return new Chart(ctx, {
+        type:'bar',
+        data:{ labels:labels, datasets:[{ data:vals, backgroundColor:colors, borderRadius:2 }]},
+        options:{
+          indexAxis:'y',
+          responsive:true, maintainAspectRatio:false,
+          animation:{ duration:1200, easing:'easeOutCubic' },
+          plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(c){ return c.parsed.x+'% of time'; } } } },
+          scales: baseScales()
+        }
+      });
+    },
+
+    'chart-cadence': function(ctx){
+      var labels = ['158','162','166','170','174','178','182','186','190'];
+      var vals =   [2,5,11,22,34,26,13,5,2];
+      return new Chart(ctx, {
+        type:'bar',
+        data:{ labels:labels, datasets:[{ data:vals, backgroundColor:COLOR_LIME, borderRadius:2, maxBarThickness:26 }]},
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          animation:{ duration:1200, easing:'easeOutCubic' },
+          plugins:{ legend:{ display:false }, tooltip:{ callbacks:{
+            title:function(c){ return c[0].label+' spm'; },
+            label:function(c){ return c.parsed.y+' runs'; }
+          } } },
+          scales: baseScales()
+        }
+      });
+    },
+
+    'chart-pace': function(ctx){
+      var labels = ['400m','1mi','5K','10K','Half','Marathon'];
+      var vals = [3.25, 3.85, 4.35, 4.60, 4.95, 5.25];
+      return new Chart(ctx, {
+        type:'line',
+        data:{ labels:labels, datasets:[{
+          data:vals, borderColor:COLOR_WHITE, backgroundColor:'rgba(244,242,236,0.06)',
+          borderWidth:2, pointRadius:3, pointBackgroundColor:COLOR_WHITE, tension:0.25, fill:true
+        }]},
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          animation:{ duration:1400, easing:'easeOutCubic' },
+          plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:function(c){ return fmtPace(c.parsed.y)+' /km'; } } } },
+          scales: baseScales({ ticks:{ color:COLOR_TEXT, callback:function(v){ return fmtPace(v); } } })
+        }
+      });
+    }
+  };
+
+  var created = {};
+  var canvases = document.querySelectorAll('.chart-box canvas');
+  if(!('IntersectionObserver' in window)){
+    canvases.forEach(function(c){ if(builders[c.id] && !created[c.id]){ created[c.id]=true; builders[c.id](c.getContext('2d')); } });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var id = entry.target.id;
+      if(entry.isIntersecting && builders[id] && !created[id]){
+        created[id] = true;
+        builders[id](entry.target.getContext('2d'));
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.25 });
+  canvases.forEach(function(c){ io.observe(c); });
+})();
+</script>
+
+<script>
+// ---------- INTERACTIVE BODY MODEL (Three.js) ----------
+(function(){
+  var MOVES = {
+    running: {
+      title:'Running',
+      primaryLabel:'Calves, quadriceps, hip flexors',
+      secondaryLabel:'Glutes, hamstrings, core stabilizers',
+      joint:'High-impact — ankle & knee, roughly 2–3× bodyweight per stride',
+      recovery:'24–48h after easy runs · 48–72h after hard or long efforts',
+      evidence:'Ground-reaction forces during running are well documented at roughly 2–3× bodyweight per stride, concentrated at the ankle and knee.',
+      primary:['calfL','calfR','thighL','thighR'],
+      secondary:['pelvis','torso']
+    },
+    squat: {
+      title:'Squat',
+      primaryLabel:'Quadriceps, glutes',
+      secondaryLabel:'Hamstrings, adductors, spinal erectors',
+      joint:'High — compressive knee & hip load, greatest near full depth',
+      recovery:'48–72h before repeating a similarly heavy session',
+      evidence:"Wilson et al.'s 2012 meta-analysis found concurrent training's interference was strongest for power output — a key reason lower-body strength work is sequenced deliberately around running.",
+      primary:['thighL','thighR','pelvis'],
+      secondary:['calfL','calfR','torso']
+    },
+    pushup: {
+      title:'Push-up',
+      primaryLabel:'Pectoralis major, triceps, anterior deltoid',
+      secondaryLabel:'Core (anti-extension), serratus anterior',
+      joint:'Low–moderate — shoulder & wrist, no impact loading',
+      recovery:'24–48h typical for muscular recovery',
+      evidence:'Upper-body pressing carries little of the interference effect seen in lower-body concurrent training — a low-cost addition alongside a running block.',
+      primary:['torso','upperArmL','upperArmR'],
+      secondary:['lowerArmL','lowerArmR','pelvis']
+    },
+    mobility: {
+      title:'Mobility',
+      primaryLabel:'Full-body — muscle-tendon length, joint capsule range',
+      secondaryLabel:'Nervous system — proprioception, stretch tolerance',
+      joint:'Low — minimal external load, range-of-motion stress only',
+      recovery:'Minimal — safe to repeat daily',
+      evidence:'Mobility work supports joint range of motion and, paired with load-bearing training, is associated with better movement quality over time.',
+      primary:[], secondary:[], isMobility:true
+    }
+  };
+
+  var titleEl = document.getElementById('bl-title');
+  var primaryEl = document.getElementById('bl-primary');
+  var secondaryEl = document.getElementById('bl-secondary');
+  var jointEl = document.getElementById('bl-joint');
+  var recoveryEl = document.getElementById('bl-recovery');
+  var evidenceEl = document.getElementById('bl-evidence');
+  var tabs = document.querySelectorAll('.bl-tab');
+
+  var parts = {};
+  var current = 'running';
+  var ready = false;
+  var mobilityRAF = null;
+
+  function applyInfo(key){
+    var m = MOVES[key];
+    titleEl.textContent = m.title;
+    primaryEl.textContent = m.primaryLabel;
+    secondaryEl.textContent = m.secondaryLabel;
+    jointEl.textContent = m.joint;
+    recoveryEl.textContent = m.recovery;
+    evidenceEl.textContent = m.evidence;
+  }
+
+  function applyHighlight(key){
+    if(!ready || typeof THREE === 'undefined') return;
+    var m = MOVES[key];
+
+    Object.keys(parts).forEach(function(k){
+      var mesh = parts[k];
+      mesh.material.color.setHex(0x2b2a27);
+      mesh.material.emissive.setHex(0x000000);
+      mesh.material.emissiveIntensity = 0;
+    });
+    if(mobilityRAF){ cancelAnimationFrame(mobilityRAF); mobilityRAF = null; }
+
+    if(m.isMobility){
+      var startT = performance.now();
+      var keys = Object.keys(parts);
+      var loop = function(now){
+        var t = (now-startT)/1000;
+        keys.forEach(function(k, i){
+          var mesh = parts[k];
+          var phase = t*1.6 + i*0.5;
+          var pulse = (Math.sin(phase)+1)/2;
+          mesh.material.emissive.setHex(pulse > 0.5 ? 0xA6FF2E : 0x21E8D8);
+          mesh.material.emissiveIntensity = 0.16 + pulse*0.22;
+        });
+        mobilityRAF = requestAnimationFrame(loop);
+      };
+      mobilityRAF = requestAnimationFrame(loop);
+      return;
+    }
+
+    m.primary.forEach(function(k){
+      if(parts[k]){
+        parts[k].material.emissive.setHex(0xA6FF2E);
+        parts[k].material.emissiveIntensity = 0.55;
+        parts[k].material.color.setHex(0x3a3a30);
+      }
+    });
+    m.secondary.forEach(function(k){
+      if(parts[k]){
+        parts[k].material.emissive.setHex(0x21E8D8);
+        parts[k].material.emissiveIntensity = 0.4;
+        parts[k].material.color.setHex(0x2f3a38);
+      }
+    });
+  }
+
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      current = tab.getAttribute('data-move');
+      applyInfo(current);
+      applyHighlight(current);
+    });
+  });
+
+  applyInfo(current);
+
+  var initedScene = false;
+  function initScene(){
+    if(initedScene) return;
+    initedScene = true;
+
+    var canvas = document.getElementById('body-canvas');
+    var wrapEl = canvas.parentElement;
+    var fallback = document.getElementById('body-fallback');
+
+    if(typeof THREE === 'undefined'){
+      fallback.style.display = 'flex';
+      canvas.style.display = 'none';
+      return;
+    }
+
+    try{
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(35, wrapEl.clientWidth/wrapEl.clientHeight, 0.1, 100);
+      camera.position.set(0, 1.15, 3.1);
+
+      var renderer = new THREE.WebGLRenderer({ canvas:canvas, antialias:true, alpha:true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+      renderer.setSize(wrapEl.clientWidth, wrapEl.clientHeight);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+      var key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(2,4,3); scene.add(key);
+      var rimLime = new THREE.PointLight(0xA6FF2E, 0.35, 8); rimLime.position.set(-2.2,2,-1.6); scene.add(rimLime);
+      var rimCyan = new THREE.PointLight(0x21E8D8, 0.3, 8); rimCyan.position.set(2.2,0.4,-1.8); scene.add(rimCyan);
+
+      var human = new THREE.Group();
+      function seg(rt, rb, h, x, y, rotZ){
+        var geo = new THREE.CylinderGeometry(rt, rb, h, 14);
+        var mat = new THREE.MeshStandardMaterial({ color:0x2b2a27, roughness:0.55, metalness:0.12, emissive:0x000000 });
+        var mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(x, y, 0);
+        if(rotZ) mesh.rotation.z = rotZ;
+        human.add(mesh);
+        return mesh;
+      }
+      function sph(r, x, y){
+        var geo = new THREE.SphereGeometry(r, 18, 14);
+        var mat = new THREE.MeshStandardMaterial({ color:0x2b2a27, roughness:0.55, metalness:0.12, emissive:0x000000 });
+        var mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(x, y, 0);
+        human.add(mesh);
+        return mesh;
+      }
+
+      parts.calfL  = seg(0.075,0.06,0.44, -0.11,0.28);
+      parts.calfR  = seg(0.075,0.06,0.44,  0.11,0.28);
+      parts.thighL = seg(0.10,0.085,0.44, -0.12,0.72);
+      parts.thighR = seg(0.10,0.085,0.44,  0.12,0.72);
+      parts.pelvis = seg(0.17,0.15,0.16,   0,1.02);
+      parts.torso  = seg(0.20,0.16,0.40,   0,1.30);
+      parts.neck   = seg(0.07,0.08,0.06,   0,1.53);
+      parts.head   = sph(0.11, 0,1.65);
+      parts.upperArmL = seg(0.055,0.065,0.30, -0.24,1.315, 0.15);
+      parts.upperArmR = seg(0.055,0.065,0.30,  0.24,1.315,-0.15);
+      parts.lowerArmL = seg(0.045,0.055,0.26, -0.27,1.05, 0.12);
+      parts.lowerArmR = seg(0.045,0.055,0.26,  0.27,1.05,-0.12);
+
+      human.position.y = -0.95;
+      scene.add(human);
+
+      var controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.target.set(0, 0.35, 0);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.enableZoom = false;
+      controls.enablePan = false;
+      controls.minPolarAngle = Math.PI*0.28;
+      controls.maxPolarAngle = Math.PI*0.62;
+      controls.autoRotate = !reducedMotion;
+      controls.autoRotateSpeed = 1.1;
+      controls.update();
+
+      ready = true;
+      applyHighlight(current);
+
+      function resize(){
+        var w = wrapEl.clientWidth, h = wrapEl.clientHeight;
+        if(!w || !h) return;
+        camera.aspect = w/h; camera.updateProjectionMatrix();
+        renderer.setSize(w,h);
+      }
+      window.addEventListener('resize', resize);
+
+      function animate(){
+        controls.update();
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+    } catch(err){
+      fallback.style.display = 'flex';
+      canvas.style.display = 'none';
+    }
+  }
+
+  var section = document.getElementById('bodylab');
+  if('IntersectionObserver' in window){
+    var secIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          initScene();
+          secIO.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.15 });
+    secIO.observe(section);
+  } else {
+    initScene();
+  }
 })();
 </script>
 
