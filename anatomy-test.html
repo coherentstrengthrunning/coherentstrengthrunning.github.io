@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Coherent Anatomy Test</title>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #060605;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        #viewer {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #label {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="viewer"></div>
+<div id="label">Loading rectus femoris...</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+const viewer = document.getElementById("viewer");
+const label = document.getElementById("label");
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    0.001,
+    1000
+);
+
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
+const controls = new THREE.OrbitControls(
+    camera,
+    renderer.domElement
+);
+
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.enablePan = false;
+controls.minDistance = 0.1;
+controls.maxDistance = 20;
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+viewer.appendChild(renderer.domElement);
+
+
+// Lighting
+
+const light = new THREE.HemisphereLight(
+    0xffffff,
+    0x333333,
+    2
+);
+
+scene.add(light);
+
+
+// Quadriceps we want to display
+
+const muscleNames = [
+    "rectus femoris",
+    "vastus lateralis",
+    "vastus medialis",
+    "vastus intermedius"
+];
+
+const loadFullBody = true;
+;
+const anatomyMeshes = [];
+const meshToConcept = new Map();
+let atlas = null;
+
+// Load Human Atlas
+
+async function loadAnatomy() {
+
+    try {
+
+        // Load anatomy database
+
+        const atlasResponse = await fetch(
+            "assets/anatomy/atlas.json"
+        );
+
+        if (!atlasResponse.ok) {
+            throw new Error("Could not load atlas.json");
+        }
+
+        atlas = await atlasResponse.json();
+
+        console.log("Atlas loaded:", atlas);
+
+
+        // Find the four quadriceps concepts
+let concepts;
+
+if (loadFullBody) {
+    concepts = atlas.concepts;
+} else {
+    concepts = muscleNames.map(name => {
+
+        const concept = atlas.concepts.find(
+            item =>
+                item.name.toLowerCase() === name
+        );
+
+        if (!concept) {
+            throw new Error(
+                name + " concept not found"
+            );
+        }
+
+        return concept;
+    });
+}
+
+
+
+ for (const part of atlas.parts) {
+
+    const concept =
+        atlas.concepts.find(
+            item => item.id === part.conceptId
+        );
+
+    if (concept) {
+        meshToConcept.set(
+            part.id,
+            concept
+        );
+    }
+}
+for (const part of atlas.parts) {
+
+    const concept =
+        atlas.concepts.find(
+            item => item.id === part.conceptId
+        );
+
+    if (concept) {
+        meshToConcept.set(
+            part.id,
+            concept
+        );
+    }
+}
+
+
+// PASTE THE NEW FUNCTION HERE
+
+function highlightConcepts(conceptNames) {
+
+    // Reset all muscles
+    for (const mesh of anatomyMeshes) {
+        mesh.material.color.set(0xaa5555);
+    }
+
+    // Find requested anatomical concepts
+    const targetConcepts = atlas.concepts.filter(
+        concept =>
+            conceptNames.includes(
+                concept.name.toLowerCase()
+            )
+    );
+
+    // Highlight matching meshes
+    for (const mesh of anatomyMeshes) {
+
+        const concept =
+            meshToConcept.get(mesh.userData.meshId);
+
+        if (
+            concept &&
+            targetConcepts.some(
+                target => target.id === concept.id
+            )
+        ) {
+            mesh.material.color.set(0xa6ff2e);
+        }
+    }
+}
+
+        // Load every mesh belonging to the four concepts
+
+// Load every unique anatomical mesh once
+
+const chunkBuffers = new Map();
+
+for (const part of atlas.parts) {
+
+    const chunk = atlas.chunks[part.chunk];
+
+    const filename =
+        chunk.url.split("/").pop();
+
+    // Load each binary chunk only once
+    if (!chunkBuffers.has(filename)) {
+
+        console.log("Loading chunk:", filename);
+
+        const response = await fetch(
+            "assets/anatomy/" + filename
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Could not load " + filename
+            );
+        }
+
+        const buffer =
+            await response.arrayBuffer();
+
+        chunkBuffers.set(
+            filename,
+            buffer
+        );
+    }
+
+    const buffer =
+        chunkBuffers.get(filename);
+
+
+    // Create geometry
+
+    const geometry =
+        new THREE.BufferGeometry();
+
+
+    const positions =
+        new Float32Array(
+            buffer,
+            part.positions,
+            part.vertexCount * 3
+        );
+
+
+    const indices =
+        new Uint32Array(
+            buffer,
+            part.indices,
+            part.indexCount
+        );
+
+
+    geometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(
+            positions,
+            3
+        )
+    );
+
+
+    geometry.setIndex(
+        new THREE.BufferAttribute(
+            indices,
+            1
+        )
+    );
+
+
+    geometry.computeVertexNormals();
+
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color: 0xaa5555,
+            roughness: 0.8,
+            metalness: 0
+        });
+
+
+    const muscle =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+
+    muscle.userData.meshId = part.id;
+    muscle.userData.system = part.system;
+    muscle.userData.selectable =
+    part.system === "muscular";
+    muscle.visible = part.system === "muscular";
+
+    const concept =
+        meshToConcept.get(part.id);
+
+    if (concept) {
+        muscle.userData.anatomyName =
+            concept.name;
+    } else {
+        muscle.userData.anatomyName =
+            part.name;
+    }
+
+
+    anatomyMeshes.push(muscle);
+
+    scene.add(muscle);
+}
+
+        // Calculate the complete quadriceps bounds
+
+        const groupBox =
+            new THREE.Box3();
+
+        scene.traverse(object => {
+
+            if (object.isMesh) {
+                groupBox.expandByObject(object);
+            }
+
+        });
+
+
+        // Center the complete group
+
+        const center =
+            new THREE.Vector3();
+
+        groupBox.getCenter(center);
+
+
+        scene.traverse(object => {
+
+            if (object.isMesh) {
+                object.position.sub(center);
+            }
+
+        });
+
+
+        // Calculate camera distance
+
+        const size =
+            new THREE.Vector3();
+
+        groupBox.getSize(size);
+
+        const maxSize =
+            Math.max(
+                size.x,
+                size.y,
+                size.z
+            );
+
+
+        camera.position.set(
+            0,
+            0,
+            maxSize * 2.5
+        );
+
+        camera.lookAt(0, 0, 0);
+
+
+        label.textContent =
+            "Quadriceps • 4 anatomical muscles";
+
+        highlightConcepts([
+           "rectus femoris",
+           "vastus lateralis",
+           "vastus medialis",
+           "vastus intermedius"
+]);
+
+
+        console.log(
+            "Quadriceps loaded successfully."
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        label.textContent =
+            "ERROR: " + error.message;
+    }
+}
+
+
+// Animation
+
+function animate() {
+
+    requestAnimationFrame(animate);
+
+    controls.update();
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+animate();
+
+
+// Responsive
+
+window.addEventListener(
+    "resize",
+    function () {
+
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
+    }
+);
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+renderer.domElement.addEventListener("click", function(event) {
+
+    const rect = renderer.domElement.getBoundingClientRect();
+
+    pointer.x =
+        ((event.clientX - rect.left) / rect.width) * 2 - 1;
+
+    pointer.y =
+        -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(pointer, camera);
+
+   const selectableMeshes =
+    anatomyMeshes.filter(mesh => mesh.userData.selectable);
+
+const hits =
+    raycaster.intersectObjects(selectableMeshes, true);
+
+    if (hits.length > 0) {
+    const selected = hits[0].object;
+    const concept = meshToConcept.get(
+    selected.userData.meshId
+);
+    console.log("SELECTED CONCEPT:", concept);
+    console.log("SELECTED SYSTEM:", selected.userData.system);
+    console.log("Selected userData:", selected.userData);
+
+    console.log(
+    "LABEL DATA:",
+    selected.userData.anatomyName,
+    selected.userData.meshId
+);
+
+    for (const mesh of anatomyMeshes) {
+    const meshConcept = meshToConcept.get(
+        mesh.userData.meshId
+    );
+
+    if (meshConcept === concept) {
+        mesh.material.color.set(0xa6ff2e);
+    } else {
+        mesh.material.color.set(0xaa5555);
+    }
+}
+
+  label.textContent =
+    `${selected.userData.anatomyName} • ${selected.userData.meshId}`;
+}
+
+});
+
+loadAnatomy();
+
+</script>
+
+</body>
+</html>

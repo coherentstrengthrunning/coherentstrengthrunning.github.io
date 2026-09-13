@@ -1226,4 +1226,99 @@
 </script>
 
 </body>
+<script src="assets/js/bodylab.js"></script>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Coherent Anatomy Test</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #060605;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        #viewer {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="viewer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<script>
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+);
+
+camera.position.set(0, 1, 4);
+
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+document.getElementById("viewer").appendChild(renderer.domElement);
+
+
+// Lighting
+
+const light = new THREE.HemisphereLight(
+    0xffffff,
+    0x444444,
+    2
+);
+
+scene.add(light);
+
+
+// Test cube
+
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+const material = new THREE.MeshStandardMaterial({
+    color: 0xaaaaaa
+});
+
+const cube = new THREE.Mesh(
+    geometry,
+    material
+);
+
+scene.add(cube);
+
+
+// Animation
+
+function animate() {
+
+    requestAnimationFrame(animate);
+
+    cube.rotation.y += 0.01;
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+</script>
+
+</body>
 </html>
