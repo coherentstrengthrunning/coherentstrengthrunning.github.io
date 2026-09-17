@@ -91,9 +91,9 @@ const muscleNames = [
 ];
 
 const loadFullBody = true;
-;
 const anatomyMeshes = [];
-const meshToConcept = new Map();
+const meshToConceptId = new Map();
+const conceptToMeshIds = new Map();
 let atlas = null;
 
 // Load Human Atlas
@@ -118,214 +118,220 @@ async function loadAnatomy() {
 
 
         // Find the four quadriceps concepts
-let concepts;
+        let concepts;
 
-if (loadFullBody) {
-    concepts = atlas.concepts;
-} else {
-    concepts = muscleNames.map(name => {
+        if (loadFullBody) {
+            concepts = atlas.concepts;
+        } else {
+            concepts = muscleNames.map(name => {
 
-        const concept = atlas.concepts.find(
-            item =>
-                item.name.toLowerCase() === name
-        );
+                const concept = atlas.concepts.find(
+                    item =>
+                        item.name.toLowerCase() === name
+                );
 
-        if (!concept) {
-            throw new Error(
-                name + " concept not found"
+                if (!concept) {
+                    throw new Error(
+                        name + " concept not found"
+                    );
+                }
+
+                return concept;
+            });
+        }
+
+        // Map each mesh ID to its exact atlas part concept ID.
+        for (const part of atlas.parts) {
+            meshToConceptId.set(part.id, part.conceptId);
+        }
+
+        // Resolve the requested parent concepts through atlas.concepts,
+        // then use each concept's element mesh IDs as the source of truth.
+        const targetConcepts = muscleNames.map(name => {
+            const concept = atlas.concepts.find(
+                item => item.name.toLowerCase() === name
             );
-        }
 
-        return concept;
-    });
-}
+            if (!concept) {
+                throw new Error(
+                    name + " concept not found"
+                );
+            }
 
-
-
- for (const part of atlas.parts) {
-
-    const concept =
-        atlas.concepts.find(
-            item => item.id === part.conceptId
-        );
-
-    if (concept) {
-        meshToConcept.set(
-            part.id,
-            concept
-        );
-    }
-}
-for (const part of atlas.parts) {
-
-    const concept =
-        atlas.concepts.find(
-            item => item.id === part.conceptId
-        );
-
-    if (concept) {
-        meshToConcept.set(
-            part.id,
-            concept
-        );
-    }
-}
-
-
-// PASTE THE NEW FUNCTION HERE
-
-function highlightConcepts(conceptNames) {
-
-    // Reset all muscles
-    for (const mesh of anatomyMeshes) {
-        mesh.material.color.set(0xaa5555);
-    }
-
-    // Find requested anatomical concepts
-    const targetConcepts = atlas.concepts.filter(
-        concept =>
-            conceptNames.includes(
-                concept.name.toLowerCase()
-            )
-    );
-
-    // Highlight matching meshes
-    for (const mesh of anatomyMeshes) {
-
-        const concept =
-            meshToConcept.get(mesh.userData.meshId);
-
-        if (
-            concept &&
-            targetConcepts.some(
-                target => target.id === concept.id
-            )
-        ) {
-            mesh.material.color.set(0xa6ff2e);
-        }
-    }
-}
-
-        // Load every mesh belonging to the four concepts
-
-// Load every unique anatomical mesh once
-
-const chunkBuffers = new Map();
-
-for (const part of atlas.parts) {
-
-    const chunk = atlas.chunks[part.chunk];
-
-    const filename =
-        chunk.url.split("/").pop();
-
-    // Load each binary chunk only once
-    if (!chunkBuffers.has(filename)) {
-
-        console.log("Loading chunk:", filename);
-
-        const response = await fetch(
-            "assets/anatomy/" + filename
-        );
-
-        if (!response.ok) {
-            throw new Error(
-                "Could not load " + filename
+            const meshIds = new Set(
+                (concept.elements || []).filter(
+                    meshId => atlas.parts.some(
+                        part => part.id === meshId
+                    )
+                )
             );
-        }
 
-        const buffer =
-            await response.arrayBuffer();
+            conceptToMeshIds.set(concept.id, meshIds);
 
-        chunkBuffers.set(
-            filename,
-            buffer
-        );
-    }
+            console.log(
+                "TARGET CONCEPT:",
+                concept.name,
+                "ID:",
+                concept.id,
+                "MESH COUNT:",
+                meshIds.size
+            );
 
-    const buffer =
-        chunkBuffers.get(filename);
-
-
-    // Create geometry
-
-    const geometry =
-        new THREE.BufferGeometry();
-
-
-    const positions =
-        new Float32Array(
-            buffer,
-            part.positions,
-            part.vertexCount * 3
-        );
-
-
-    const indices =
-        new Uint32Array(
-            buffer,
-            part.indices,
-            part.indexCount
-        );
-
-
-    geometry.setAttribute(
-        "position",
-        new THREE.BufferAttribute(
-            positions,
-            3
-        )
-    );
-
-
-    geometry.setIndex(
-        new THREE.BufferAttribute(
-            indices,
-            1
-        )
-    );
-
-
-    geometry.computeVertexNormals();
-
-
-    const material =
-        new THREE.MeshStandardMaterial({
-            color: 0xaa5555,
-            roughness: 0.8,
-            metalness: 0
+            return concept;
         });
 
+        function highlightConcepts(conceptsToHighlight) {
 
-    const muscle =
-        new THREE.Mesh(
-            geometry,
-            material
-        );
+            // Reset all muscles.
+            for (const mesh of anatomyMeshes) {
+                mesh.material.color.set(0xaa5555);
+            }
+
+            const highlightedMeshIds = new Set();
+
+            for (const concept of conceptsToHighlight) {
+                const meshIds = conceptToMeshIds.get(concept.id) || new Set();
+
+                for (const meshId of meshIds) {
+                    highlightedMeshIds.add(meshId);
+                }
+            }
+
+            // Highlight only meshes explicitly associated with the target concepts.
+            for (const mesh of anatomyMeshes) {
+                if (highlightedMeshIds.has(mesh.userData.meshId)) {
+                    mesh.material.color.set(0xa6ff2e);
+                }
+            }
+
+            console.log(
+                "TOTAL HIGHLIGHTED MESHES:",
+                highlightedMeshIds.size
+            );
+        }
+
+        // Load every unique anatomical mesh once
+
+        const chunkBuffers = new Map();
+
+        for (const part of atlas.parts) {
+
+            const chunk = atlas.chunks[part.chunk];
+
+            const filename =
+                chunk.url.split("/").pop();
+
+            // Load each binary chunk only once
+            if (!chunkBuffers.has(filename)) {
+
+                console.log("Loading chunk:", filename);
+
+                const response = await fetch(
+                    "assets/anatomy/" + filename
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Could not load " + filename
+                    );
+                }
+
+                const buffer =
+                    await response.arrayBuffer();
+
+                chunkBuffers.set(
+                    filename,
+                    buffer
+                );
+            }
+
+            const buffer =
+                chunkBuffers.get(filename);
 
 
-    muscle.userData.meshId = part.id;
-    muscle.userData.system = part.system;
-    muscle.userData.selectable =
-    part.system === "muscular";
-    muscle.visible = part.system === "muscular";
+            // Create geometry
 
-    const concept =
-        meshToConcept.get(part.id);
-
-    if (concept) {
-        muscle.userData.anatomyName =
-            concept.name;
-    } else {
-        muscle.userData.anatomyName =
-            part.name;
-    }
+            const geometry =
+                new THREE.BufferGeometry();
 
 
-    anatomyMeshes.push(muscle);
+            const positions =
+                new Float32Array(
+                    buffer,
+                    part.positions,
+                    part.vertexCount * 3
+                );
 
-    scene.add(muscle);
-}
+
+            const indices =
+                new Uint32Array(
+                    buffer,
+                    part.indices,
+                    part.indexCount
+                );
+
+
+            geometry.setAttribute(
+                "position",
+                new THREE.BufferAttribute(
+                    positions,
+                    3
+                )
+            );
+
+
+            geometry.setIndex(
+                new THREE.BufferAttribute(
+                    indices,
+                    1
+                )
+            );
+
+
+            geometry.computeVertexNormals();
+
+
+            const material =
+                new THREE.MeshStandardMaterial({
+                    color: 0xaa5555,
+                    roughness: 0.8,
+                    metalness: 0
+                });
+
+
+            const muscle =
+                new THREE.Mesh(
+                    geometry,
+                    material
+                );
+
+
+            muscle.userData.meshId = part.id;
+            muscle.userData.system = part.system;
+            muscle.userData.selectable =
+            part.system === "muscular";
+            muscle.visible = part.system === "muscular";
+
+            const conceptId =
+                meshToConceptId.get(part.id);
+
+            const concept = atlas.concepts.find(
+                item => item.id === conceptId
+            );
+
+            if (concept) {
+                muscle.userData.anatomyName =
+                    concept.name;
+            } else {
+                muscle.userData.anatomyName =
+                    part.name;
+            }
+
+
+            anatomyMeshes.push(muscle);
+
+            scene.add(muscle);
+        }
 
         // Calculate the complete quadriceps bounds
 
@@ -385,12 +391,7 @@ for (const part of atlas.parts) {
         label.textContent =
             "Quadriceps • 4 anatomical muscles";
 
-        highlightConcepts([
-           "rectus femoris",
-           "vastus lateralis",
-           "vastus medialis",
-           "vastus intermedius"
-]);
+        highlightConcepts(targetConcepts);
 
 
         console.log(
@@ -456,42 +457,46 @@ renderer.domElement.addEventListener("click", function(event) {
 
     raycaster.setFromCamera(pointer, camera);
 
-   const selectableMeshes =
-    anatomyMeshes.filter(mesh => mesh.userData.selectable);
+    const selectableMeshes =
+        anatomyMeshes.filter(mesh => mesh.userData.selectable);
 
-const hits =
-    raycaster.intersectObjects(selectableMeshes, true);
+    const hits =
+        raycaster.intersectObjects(selectableMeshes, true);
 
     if (hits.length > 0) {
-    const selected = hits[0].object;
-    const concept = meshToConcept.get(
-    selected.userData.meshId
-);
-    console.log("SELECTED CONCEPT:", concept);
-    console.log("SELECTED SYSTEM:", selected.userData.system);
-    console.log("Selected userData:", selected.userData);
+        const selected = hits[0].object;
+        const conceptId = meshToConceptId.get(
+            selected.userData.meshId
+        );
+        const concept = atlas.concepts.find(
+            item => item.id === conceptId
+        );
 
-    console.log(
-    "LABEL DATA:",
-    selected.userData.anatomyName,
-    selected.userData.meshId
-);
+        console.log("SELECTED CONCEPT:", concept);
+        console.log("SELECTED SYSTEM:", selected.userData.system);
+        console.log("Selected userData:", selected.userData);
 
-    for (const mesh of anatomyMeshes) {
-    const meshConcept = meshToConcept.get(
-        mesh.userData.meshId
-    );
+        console.log(
+            "LABEL DATA:",
+            selected.userData.anatomyName,
+            selected.userData.meshId
+        );
 
-    if (meshConcept === concept) {
-        mesh.material.color.set(0xa6ff2e);
-    } else {
-        mesh.material.color.set(0xaa5555);
+        for (const mesh of anatomyMeshes) {
+            const meshConceptId = meshToConceptId.get(
+                mesh.userData.meshId
+            );
+
+            if (meshConceptId === conceptId) {
+                mesh.material.color.set(0xa6ff2e);
+            } else {
+                mesh.material.color.set(0xaa5555);
+            }
+        }
+
+        label.textContent =
+            `${selected.userData.anatomyName} • ${selected.userData.meshId}`;
     }
-}
-
-  label.textContent =
-    `${selected.userData.anatomyName} • ${selected.userData.meshId}`;
-}
 
 });
 
